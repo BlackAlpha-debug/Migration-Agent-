@@ -38,11 +38,16 @@ This migration mirrors a real merged PR: [ether/etherpad#3559](https://github.co
 
 | | Before | After |
 |---|---|---|
-| Tests passing | `[FILL IN]` | `[FILL IN]` |
+| Tests passing | 68/75 (90.7%) | 68/75 (90.7%) — exact parity, same 7 pre-existing failures |
 | Files migrated | — | 5 (`bin/*.js`) |
-| Commits | — | `[FILL IN]` |
-| Time | — | `[FILL IN]` |
-| Model cost | — | `[FILL IN]` |
+| Commits | — | 8 (1 baseline+plan, 5 one-per-file migration steps, 2 verification) |
+| Time | — | ~29 hours wall-clock across 4 sessions (not continuous effort — see note below) |
+| Model cost | — | not tracked (no token/billing access this session) |
+
+*Time reflects calendar time between the first and last commit across separate conversational
+sessions, not continuous active work — it isn't a real proxy for engineering effort or cost.
+Model cost isn't included because no token/billing data was available from within the session;
+anyone reproducing this should pull that from their own usage dashboard.*
 
 ## Reusable skill
 
@@ -50,7 +55,18 @@ The planner/executor/verifier workflow — including the framework for handling 
 
 ## Limitations
 
-`[FILL IN — one honest paragraph. E.g.: scoped to 5 files, not a full-codebase migration. Verifier ran on the same model family as the planner rather than a fully independent model. Ground-truth comparison only exists because this repo happened to have a prior human migration to compare against — most migrations won't have that.]`
+This is scoped to 5 standalone CLI scripts with no existing test coverage, not a full-codebase
+migration under an active test suite — the verification strategy here (golden-output diffing
+against the pre-migration behavior) doesn't obviously generalize to code with real dependents.
+The verifier also ran on the same model family as the planner rather than a fully independent
+one, which matters: an early planning claim ("the original script's failure mode is
+deterministic") went unchallenged until the verifier re-ran the comparison from scratch and found
+it wasn't — a genuinely independent verifier is a check against the *executor's* mistakes, not
+against a flawed premise the planner and verifier both inherited from the same model family. And
+the ground-truth comparison against a real historical PR is a lucky feature of this specific
+repo, not something most migrations can lean on — without it, the project would have had no way
+to catch that the redefined success criteria (see "The interesting part," above) matched what
+human maintainers actually shipped rather than just being a plausible-sounding rationalization.
 
 ## Attribution
 
